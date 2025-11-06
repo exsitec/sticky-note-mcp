@@ -32,12 +32,16 @@ Environment variables accepted by the server:
    command = "/Users/<username>/.pyenv/shims/python"
    args = ["-m", "server.main"]
    cwd = "/path/to/sticky-note-mcp"
-   env = { "SESSION_HISTORY_DIR" = "/Users/<username>/.codex/sessions" }
+   
+   [mcp_servers.sticky_note.env]
+   SESSION_HISTORY_DIR = "/Users/<username>/.codex/sessions"
+   STICKY_NOTES_DIR = "/Users/<username>/.codex/sticky-notes"
    ```
 
    - To discover your Python path, run `which python` (or `pyenv which python`) and drop that into `command`.
    - Set `cwd` to the directory containing this repository so relative imports and data paths resolve correctly.
    - Point `SESSION_HISTORY_DIR` at the history store you want the server to read; inside Codex this should be `~/.codex/sessions`, but you can substitute another directory if you maintain histories elsewhere.
+   - Use `STICKY_NOTES_DIR` to choose where sticky notes are persisted (defaults to `<repo>/data/sticky_notes`; in the example we store them under `~/.codex/sticky-notes`).
 
 3. Restart Codex (or run `codex mcp list`) so it picks up the new MCP server. The sticky-note tools—`mcp__sticky_note__create_sticky_note` and `mcp__sticky_note__read_relevant_sticky_notes`—will appear in the tool palette.
 
