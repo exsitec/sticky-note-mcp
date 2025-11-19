@@ -32,5 +32,5 @@ def get_history_provider(name: str, history_root: Path) -> SessionHistoryProvide
 
 
 # Eagerly import provider modules for registration side-effects
-from . import codex  # noqa: E402,F401
+from . import codex, copilot  # noqa: E402,F401
 

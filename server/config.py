@@ -47,7 +47,7 @@ def load_config() -> ServerConfig:
     framework = os.getenv(ENV_FRAMEWORK, DEFAULT_FRAMEWORK).strip().lower()
     notes_dir = _read_path(ENV_NOTES_DIR, default_notes)
     history_dir = _read_path(ENV_HISTORY_DIR, default_history)
-
+    
     return ServerConfig(
         framework=framework,
         notes_dir=notes_dir,
