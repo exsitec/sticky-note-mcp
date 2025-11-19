@@ -8,14 +8,45 @@ An MCP server built with the FastMCP Python package that lets agents persist sti
 - `read_relevant_sticky_notes()` scans the active session history and, for each unseen note whose regex matches, returns `{"message", "trigger_snippets"}` once per session.
 - Pluggable session history provider architecture selected through an environment variable (defaults to `codex`).
 - Codex implementation reads rollout `.jsonl` history files and normalises content items, reasoning traces, and important events.
+- GitHub Copilot implementation reads chat history from VS Code workspace storage and supports tool call matching.
 
 ## Configuration
 
 Environment variables accepted by the server:
 
-- `MCP_AGENT_FRAMEWORK` – selects which session history provider to use (default: `codex`).
+- `MCP_AGENT_FRAMEWORK` – selects which session history provider to use (`codex` or `copilot`; default: `codex`).
 - `STICKY_NOTES_DIR` – directory where the `sticky_notes.jsonl` file is created (default: `<repo>/data/sticky_notes`).
-- `SESSION_HISTORY_DIR` – directory containing agent session histories (default: `<repo>/data/history`; when running inside Codex point this to `~/.codex/sessions`).
+- `SESSION_HISTORY_DIR` – directory containing agent session histories.
+    - For **Codex**: default is `<repo>/data/history`.
+    - For **Copilot**: optional; if omitted, the server attempts to auto-discover chat sessions in standard VS Code workspace storage locations.
+
+## Using with GitHub Copilot
+
+1.  **Configure the MCP Server in VS Code**:
+    Add the server to your VS Code User Settings (`settings.json`) under `mcp.servers` (requires the MCP extension) or via the specific MCP configuration file you are using.
+
+    ```json
+    "mcp.servers": {
+        "sticky-note": {
+            "command": "python3",
+            "args": [
+                "-m",
+                "server.main"
+            ],
+            "cwd": "/absolute/path/to/sticky-note-mcp",
+            "env": {
+                "MCP_AGENT_FRAMEWORK": "copilot",
+                "STICKY_NOTES_DIR": "/absolute/path/to/sticky-note-mcp/data/sticky_notes"
+            }
+        }
+    }
+    ```
+
+    *Note: Ensure `python3` is in your path or provide the absolute path to the python executable.*
+
+2.  **Usage**:
+    - The server will automatically scan your VS Code workspace storage for the most recent Copilot chat session.
+    - You can use `create_sticky_note` to attach notes to specific keywords or tool calls (e.g., "create a note when `create_sticky_note` is called").
 
 ## Using with Codex
 
@@ -54,4 +85,4 @@ pip install -r requirements-dev.txt  # if you capture dependencies separately
 pytest
 ```
 
-The test suite covers sticky note persistence, session tracking, and Codex history parsing.
+The test suite covers sticky note persistence, session tracking, and history parsing for both Codex and Copilot.
